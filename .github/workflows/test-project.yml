@@ -11,26 +11,18 @@ jobs:
     container:
       image: node:20
     steps:
-      - uses: actions/checkout@v3
-        with
+      - uses: actions/checkout@v4
 
-name: Test Project
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
-on:
-  pull_request:
-    branches:
-      - main
+      - name: Run tests (if defined)
+        run: npm test --if-present
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    container:
-      image: node:20
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          node-version: 20
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
-
+      - name: Build (if defined)
+        run: npm run build --if-present
